@@ -2,7 +2,7 @@
 
 APC40 {
 
-	var ccr,nonr,noffr,apc,src,handlers,map,noteMap,<clipLaunchStates;
+	var ccr,nonr,noffr,apc,src,handlers,map,noteMap,noteOffMap,<clipLaunchStates;
 
 	*new { arg install=true;
 		if(MIDIClient.initialized.not,{MIDIIn.connectAll});
@@ -127,13 +127,25 @@ APC40 {
 					})
 				}
 			},src);
-		//noffr
+		noffr = NoteOffResponder({ arg src,chan,num,value;
+				noteOffMap.detect { arg mev;
+					if(mev.key.match(src, chan, num, nil),{
+						// if it matches only on a specific state
+						// then it may return false
+						mev.value.value(src,chan,num,value);
+					},{
+						false
+					})
+				}
+			},src);
 	}
 	remove {
 		ccr.remove;
 		ccr = nil;
 		nonr.remove;
 		nonr = nil;
+		noffr.remove;
+		noffr = nil;
 	}
 	init { arg add;
 		apc = MIDIOut.newByName("Akai APC40", "Akai APC40");
