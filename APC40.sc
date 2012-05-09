@@ -65,16 +65,46 @@ APC40 {
 		});
 		noteMap = noteMap.add( MIDIEvent(nil, src, track, note, state) -> f );
 	}
-	// noteOff too
-	// sceneLaunch
-	// clipStop
-	// stopAllClips
-	// activator
-	// solo
-	// recordArm
-	// play
-	// stop
-	// rec
+	sceneLaunch { arg row,func;
+		this.prAddNote(0,row ? {arg b; b.inclusivelyBetween(82,86)},func)
+	}
+	clipStop { arg track,func;
+		this.prAddNote(track,52,{ arg chan,note; func.value(track) })
+	}
+	stopAllClips { arg func;
+		this.prAddNote(0,81,{ arg chan,note; func.value() })
+	}
+	activator { arg track,func;
+		this.prAddNote(track,50,{ arg chan,note; func.value(track,true) })
+		this.prAddNoteOff(track,50,{ arg chan,note; func.value(track,false) });
+	}
+	solo { arg track,func;
+		this.prAddNote(track,49,{ arg chan,note; func.value(track,true) });
+		this.prAddNoteOff(track,49,{ arg chan,note; func.value(track,false) });
+	}
+	recordArm { arg track,func;
+		this.prAddNote(track,48,{ arg chan,note; func.value(track,true) })
+		this.prAddNoteOff(track,48,{ arg chan,note; func.value(track,false) });
+	}
+	play { arg func;
+		this.prAddNote(0,91,{ arg chan,note; func.value() })
+	}
+	stop { arg func;
+		this.prAddNote(0,92,{ arg chan,note; func.value() })
+	}
+	rec { arg func;
+		this.prAddNote(0,93,{ arg chan,note; func.value() })
+	}
+	// bankSelect
+	nudgeMinus { arg func;
+		this.prAddNote(0,101,{ arg chan,note; func.value() })
+	}
+	nudgePlus { arg func;
+		this.prAddNote(0,100,{ arg chan,note; func.value() })
+	}
+	tapTempo { arg func;
+		this.prAddNote(0,99,{ arg chan,note; func.value() })
+	}
 
 	// blinkenlichten
 	setClip { arg track,button,mode;
@@ -172,6 +202,22 @@ APC40 {
 			map.put(8,16 + controli,['deviceControl',8,controli]);
 		};
 		if(add,{this.add})
+	}
+	prAddNote { arg track,note,func;
+		var f;
+		f = { arg src,chan,note,velocity;
+			func.value(chan,note);
+			true
+		};
+		noteMap = noteMap.add( MIDIEvent(nil,src,track,note) -> f)
+	}
+	prAddNoteOff { arg track,note,func;
+		var f;
+		f = { arg src,chan,note,velocity;
+			func.value(chan,note);
+			true
+		};
+		noteOffMap = noteOffMap.add( MIDIEvent(nil,src,track,note) -> f)
 	}
 	put { arg key,index,func;
 		handlers.put(key,index,func)
