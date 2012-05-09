@@ -19,12 +19,12 @@ APC40 {
 	xfader { arg func;
 		this.put('xfader','*',func)
 	}
-	//trackSelect { arg i,func;
+	/*trackSelect { arg i,func;
 		// it sends all deviceControl knobs cc for the newly selected track
 		// but otherwise no way to detect that trackSelect was pushed
 		// unless detect the splurge if cc 16 .. 23
-	//	this.put('trackSelect',i ? '*',func)
-	//}
+		this.put('trackSelect',i ? '*',func)
+	}*/
 	trackControl { arg i,func;
 		// the top right 8 knobs
 		this.put('trackControl',i ? '*',func)
@@ -133,7 +133,7 @@ APC40 {
 		}
 	}
 
-	//
+	// private
 	add {
 		ccr = CCResponder({ arg src,chan,num,value;
 				var key,handler;
@@ -224,37 +224,5 @@ APC40 {
 	}
 }
 
-/*
-APC40r {
-	
-	var <>func,<>name,<>index;
-		
-	value { arg val;	
-		func.value(val,index)
-	}
-}
-*/
 
-/*
-	subclass CCBank or use one
-		
-	outlets:
-		fader0
-			...
-			
-		master
-		xfader
-		
-		track0
-			...
 
-		
-		trackControl1
-			...
-		deviceControl1
-			...
-			
-	find src number by name in devices
-	
-		
-*/
