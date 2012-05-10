@@ -70,7 +70,7 @@ APC40 {
 		this.prAddNote(0,row ? matchScene,func)
 	}
 	clipStop { arg track,func;
-		this.prAddNote(track,52,{ arg chan,note; func.value(track) })
+		this.prAddNote(track,52,{ arg chan,note; func.value(chan) })
 	}
 	stopAllClips { arg func,offFunc;
 		this.prAddNoteOnOff(0,81,{ arg chan,note; func.value() },offFunc);
