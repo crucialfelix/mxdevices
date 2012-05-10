@@ -20,12 +20,6 @@ APC40 {
 	xfader { arg func;
 		this.put('xfader','*',func)
 	}
-	/*trackSelect { arg i,func;
-		// it sends all deviceControl knobs cc for the newly selected track
-		// but otherwise no way to detect that trackSelect was pushed
-		// unless detect the splurge if cc 16 .. 23
-		this.put('trackSelect',i ? '*',func)
-	}*/
 	trackControl { arg i,func;
 		// the top right 8 knobs
 		this.put('trackControl',i ? '*',func)
@@ -75,6 +69,12 @@ APC40 {
 	stopAllClips { arg func,offFunc;
 		this.prAddNoteOnOff(0,81,{ arg chan,note; func.value() },offFunc);
 	}
+	/*trackSelect { arg i,func;
+		// it sends all deviceControl knobs cc for the newly selected track
+		// but otherwise no way to detect that trackSelect was pushed
+		// unless detect the splurge if cc 16 .. 23
+		this.put('trackSelect',i ? '*',func)
+	}*/	
 	activator { arg track,func;
 		this.prAddNoteOnOff(track,50,
 			{ arg chan,note; func.value(track,true) },
@@ -195,9 +195,6 @@ APC40 {
 		matchScene = { arg b; b.inclusivelyBetween(82,86) };
 		8.do { arg i;
 			map.put(i,7,[\fader,i]);
-
-			// map.put(i,16,['trackSelect',i]);
-			
 			map.put(0,48 + i,['trackControl',i]);
 
 			8.do { arg controli;
