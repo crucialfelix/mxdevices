@@ -83,18 +83,18 @@ APC40 {
 	}*/	
 	activator { arg track,func;
 		this.prAddNoteOnOff(track,50,
-			{ arg chan,note; func.value(track,true) },
-			{ arg chan,note; func.value(track,false) })
+			{ arg chan,note; func.value(true,track) },
+			{ arg chan,note; func.value(false,track) })
 	}
 	solo { arg track,func;
 		this.prAddNoteOnOff(track,49,
-			{ arg chan,note; func.value(track,true) },
-			{ arg chan,note; func.value(track,false) })
+			{ arg chan,note; func.value(true,track) },
+			{ arg chan,note; func.value(false,track) })
 	}
 	recordArm { arg track,func;
 		this.prAddNoteOnOff(track,48,
-			{ arg chan,note; func.value(track,true) },
-			{ arg chan,note; func.value(track,false) })
+			{ arg chan,note; func.value(true,track) },
+			{ arg chan,note; func.value(false,track) })
 	}
 	play { arg func;
 		this.prAddNote(0,91,{ arg chan,note; func.value() })
@@ -155,7 +155,7 @@ APC40 {
 						key.put(1,'*'); // wildcard number
 						handlers.at(*key)
 					};
-					handler.value(value);
+					handler.value(value,num,chan);
 				})
 			},src);
 		nonr = NoteOnResponder({ arg src,chan,num,value;
