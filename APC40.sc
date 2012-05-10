@@ -11,26 +11,32 @@ APC40 {
 	}
 
 	// receiving
-	fader { arg i,func;
-		this.put('fader',i ? '*',func)
+	fader { arg i,func; // arg 0..127, faderi
+		handlers.put('fader',i ? '*',
+			{ arg value,num,chan; func.value(value,chan) })
 	}
-	master { arg func;
-		this.put('master','*',func)
+	master { arg func; // arg 0..127
+		handlers.put('master','*',func)
 	}
 	xfader { arg func;
-		this.put('xfader','*',func)
+		handlers.put('xfader','*',func)
 	}
 	trackControl { arg i,func;
 		// the top right 8 knobs
-		this.put('trackControl',i ? '*',func)
+		handlers.put('trackControl',i ? '*',
+			{ arg value,num,chan; func.value(value,chan) })
 	}
-	deviceControl { arg track,i,func;
+	deviceControl { arg tracki,knobi,func; 
+		// func: arg val,knob,track
 		// bottom right 8 knobs
 		// context dependent on which track is selected
 		// you may supply track=nil to just use the 8 without regard to track selection
 		// however the bank recalls previous values for the track
 		// when it is selected so you will lose your place
-		this.put('deviceControl',track,i ? '*',func)
+		handlers.put('deviceControl',tracki,knobi ? '*',
+			{ arg value,num,chan; 
+				func.value(value,num - 16,chan) 
+			})
 	}
 	clipLaunch { arg func,track,button,state,blinkCycle=#[0,1];
 		var f,note;
@@ -73,7 +79,7 @@ APC40 {
 		// it sends all deviceControl knobs cc for the newly selected track
 		// but otherwise no way to detect that trackSelect was pushed
 		// unless detect the splurge if cc 16 .. 23
-		this.put('trackSelect',i ? '*',func)
+		handlers.put('trackSelect',i ? '*',func)
 	}*/	
 	activator { arg track,func;
 		this.prAddNoteOnOff(track,50,
@@ -231,9 +237,6 @@ APC40 {
 		if(offFunc.notNil,{
 			this.prAddNoteOff(track,note,offFunc)
 		})
-	}
-	put { arg key,index,func;
-		handlers.put(key,index,func)
 	}
 }
 
