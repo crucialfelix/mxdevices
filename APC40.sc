@@ -109,11 +109,13 @@ APC40 {
 	tapTempo { arg func;
 		this.prAddNote(0,99,{ arg chan,note; func.value() })
 	}
+	// 8 click buttons below, 4 above
+
 
 	// blinkenlichten
 	setClip { arg track,button,mode;
 		/* set the clipLaunch button blinking
-		button: top - bottom
+		button: 0..4 = top..bottom
 		mode:
 			0 - Off
 			1 - Green
