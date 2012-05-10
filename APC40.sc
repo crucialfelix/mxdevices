@@ -72,20 +72,23 @@ APC40 {
 	clipStop { arg track,func;
 		this.prAddNote(track,52,{ arg chan,note; func.value(track) })
 	}
-	stopAllClips { arg func;
-		this.prAddNote(0,81,{ arg chan,note; func.value() })
+	stopAllClips { arg func,offFunc;
+		this.prAddNoteOnOff(0,81,{ arg chan,note; func.value() },offFunc);
 	}
 	activator { arg track,func;
-		this.prAddNote(track,50,{ arg chan,note; func.value(track,true) });
-		this.prAddNoteOff(track,50,{ arg chan,note; func.value(track,false) });
+		this.prAddNoteOnOff(track,50,
+			{ arg chan,note; func.value(track,true) },
+			{ arg chan,note; func.value(track,false) })
 	}
 	solo { arg track,func;
-		this.prAddNote(track,49,{ arg chan,note; func.value(track,true) });
-		this.prAddNoteOff(track,49,{ arg chan,note; func.value(track,false) });
+		this.prAddNoteOnOff(track,49,
+			{ arg chan,note; func.value(track,true) },
+			{ arg chan,note; func.value(track,false) })
 	}
 	recordArm { arg track,func;
-		this.prAddNote(track,48,{ arg chan,note; func.value(track,true) });
-		this.prAddNoteOff(track,48,{ arg chan,note; func.value(track,false) });
+		this.prAddNoteOnOff(track,48,
+			{ arg chan,note; func.value(track,true) },
+			{ arg chan,note; func.value(track,false) })
 	}
 	play { arg func;
 		this.prAddNote(0,91,{ arg chan,note; func.value() })
@@ -223,6 +226,12 @@ APC40 {
 			true
 		};
 		noteOffMap.put([track,note], MIDIEvent(nil,src,track,note) -> f )
+	}
+	prAddNoteOnOff { arg track,note,onFunc,offFunc;
+		this.prAddNote(track,note,onFunc);
+		if(offFunc.notNil,{
+			this.prAddNoteOff(track,note,offFunc)
+		})
 	}
 	put { arg key,index,func;
 		handlers.put(key,index,func)
