@@ -76,8 +76,8 @@ APC40 {
 		this.prAddNoteOnOff(0,81,{ arg chan,note; func.value() },offFunc);
 	}
 	/*trackSelect { arg i,func;
-		// it sends all deviceControl knobs cc for the newly selected track
-		// but otherwise no way to detect that trackSelect was pushed
+		// when you push trackSelect it sends the cc values for all deviceControl knobs for the newly selected track
+		// but otherwise there is no way to detect that trackSelect was pushed
 		// unless detect the splurge if cc 16 .. 23
 		handlers.put('trackSelect',i ? '*',func)
 	}*/	
@@ -201,18 +201,18 @@ APC40 {
 		noteOffMap = Dictionary.new;
 		matchClip = { arg b; b.inclusivelyBetween(53,61) };
 		matchScene = { arg b; b.inclusivelyBetween(82,86) };
-		8.do { arg i;
-			map.put(i,7,[\fader,i]);
-			map.put(0,48 + i,['trackControl',i]);
+		8.do { arg tracki;
+			map.put(tracki,7,[\fader,tracki]);
+			map.put(0,48 + tracki,['trackControl',tracki]);
 
-			8.do { arg controli;
-				map.put(i,16 + controli,['deviceControl',i,controli]);
+			8.do { arg knobi;
+				map.put(tracki,16 + knobi,['deviceControl',tracki,knobi]);
 			}
 		};
 		map.put(0,14,['master',0]);
 		map.put(0,15,['xfader',0]);
-		8.do { arg controli;
-			map.put(8,16 + controli,['deviceControl',8,controli]);
+		8.do { arg knobi;
+			map.put(8,16 + knobi,['deviceControl',8,knobi]);
 		};
 		if(add,{this.add})
 	}
