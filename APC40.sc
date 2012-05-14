@@ -67,6 +67,18 @@ APC40 {
 		});
 		noteMap.put([track,note], MIDIEvent(nil, src, track, note, state) -> f );
 	}
+	// play clipLaunch area like midi keyboard
+	/*
+	clipLaunchKeyboard { arg noteOnFunc,noteOffFunc;
+		var f,g;
+		f = { arg src,chan,num,veloc;
+			noteOnFunc.value(chan,num - 53)
+		};
+		g = { arg src,chan,num,veloc;
+			noteOffFunc.value(chan,num - 53)
+		};
+		this.prAddNoteOnOff(matchtracks, matchbuttons,noteOnFunc,noteOffFunc)
+	} */
 	sceneLaunch { arg row,func;
 		this.prAddNote(0,row ? matchScene,func)
 	}
