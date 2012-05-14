@@ -1,0 +1,411 @@
+CLASS:: APC40
+summary:: MIDI responders and control of blinkenlichten for the APC40
+categories:: MIDI, Control
+related:: 
+
+DESCRIPTION::
+Set handler methods for all sliders, knobs and buttons on the APC40.  Also supports methods for setting the lights in the Clip Launch area. 
+
+
+
+CLASSMETHODS::
+
+METHOD:: new
+
+
+argument:: install
+Activate the responder object immediately.  You would not want to activate it if you created several of them and only wanted one active at any one time.
+
+returns:: an APC40
+
+
+INSTANCEMETHODS::
+
+subsection:: Faders
+
+METHOD:: fader
+Assign a function to a fader or to all faders.
+
+argument:: i
+0..7 Integer or nil (match any)
+
+argument:: func
+args: value (0..127), faderi (0..7)
+
+
+
+METHOD:: master
+Assign a function to the master fader
+
+argument:: func
+args: value (0..127)
+
+
+
+METHOD:: xfader
+Assign a function to the cross fader
+
+argument:: func
+args: value (0..127)
+
+
+
+
+subsection:: Clip Launch
+
+The clip launch buttons do not store any state on the APC40. It only sends that the button has been pressed and a response may be sent to set buttons to any of these states:
+
+code::
+state:
+	0 - Off
+	1 - Green
+	2 - Green Flashing
+	3 - Red
+	4 - Red Flashing
+	5 - Orange
+	6 - Orange Flashing
+::
+
+For the simple and common case of wanting buttons to go on or off when you click them, the state can be stored in the APC40 sclang object using the blinkCycle arg to clipLaunch (see below).
+
+METHOD:: clipLaunch
+Assign a function to one or more clip launch buttons.  You can assign a function to a specific button or to any combination of track, button and state.
+
+code::
+// any button toggle between off and green
+a.clipLaunch({ arg track,button,state;
+    [track,button,state].debug
+},nil,nil,nil,[0,1]);
+::
+
+argument:: func
+arg: tracki (0..7), buttoni (0..4) top to bottom, state (0..6)
+
+argument:: track
+Respond only on the specified track 0..7 or nil (match any)
+
+argument:: button
+Respond only on the specified button. Nil will match any
+
+argument:: state
+Respond only when the button goes to the specified state.  Usually nil is best (respond regardless of state) and handle the different states in your responder function.  The state is stored in this object, not in the APC40 controller itself.  blinkCycle (see below) determines how the states are cycled through, and the state that is matched here is the state that the button is going to as determined by the blinkCycle.  If blinkCycle is nil then there is no state tracking and you are free to use any other system to blink lights.
+
+code::
+// any button, fires only when state goes to 1
+a.clipLaunch({ arg track,button,state;
+    [track,button,state].debug("on")
+},nil,nil,1,[0,1]);
+::
+
+argument:: blinkCycle
+Default is [0,1] which is a simple binary on/off.  This means that each time you press a clipLaunch button it will be set to green (on = 1) or back to off (off = 0) and the responder function will be passed that state value when pressed. [0,1,5,3] would cycle between off, green, orange, red.  Nil will not cycle at all and will not store state, which allows you to set the lights manually and keep state wherever you like (or not at all).
+TL/DR: when you push the button it lights up. push it again and it goes off.
+
+
+
+METHOD:: setClip
+Set a clip launch button to the desired state of blinking.
+
+argument:: track
+(0..7)
+
+argument:: button
+(0..4) top to buttom
+
+argument:: state
+See state list above
+
+
+
+METHOD:: clipLaunchStates
+Returns an Array2D of the current clip launch button states (state values).  NOTE that Array2D is rows, columns not x/y (5 rows, 8 columns) so you need to access it as apc.clipLaunchStates.at(y,x) 
+
+returns:: an Array2D
+
+METHOD:: setAllClips
+Set all clip launch states, sending midi commands to the APC40
+
+argument:: array2d
+Array2D of state values (NOTE: row, column)
+
+
+
+METHOD:: setTrackClips
+For one track, set the 5 lights
+
+argument:: tracki
+(0..7) track number
+
+argument:: arrayOfFive
+Array of 5 blink mode values
+
+
+
+
+subsection:: Tracks
+
+The Track Selection buttons do not send anything themselves but they switch the Device Control knobs (bottom right) to the values for the selected track and send all 8 of those values when the track is selected.
+
+For the activator, solo/cue and record arm buttons the state is stored in the APC40 itself, so when the light goes on the handler will get a true, and when the light goes off it gets a false.
+
+
+METHOD:: clipStop
+Assign a function for the track's clip stop button.
+
+argument:: track
+0..7 or nil to match any
+
+argument:: func
+arg: tracki (0..7)
+
+
+
+METHOD:: stopAllClips
+Assign a function for the STOP ALL CLIPS button.
+
+argument:: func
+args: 
+
+argument:: offFunc
+Optional function fired on note off: when the button is released.  All of the buttons will later be implemented this way.
+
+
+
+METHOD:: activator
+Assign a function for the track Activator button.
+
+argument:: track
+tracki (0..7) or nil to match any
+
+argument:: func
+args: on/off (boolean), tracki (0..7)
+
+
+
+METHOD:: solo
+Assign a function for the track Solo button.
+
+argument:: track
+tracki (0..7) or nil to match any
+
+argument:: func
+args: on/off (boolean), tracki (0..7)
+
+
+
+METHOD:: recordArm
+Assign a function for the Record Arm button
+
+argument:: track
+tracki (0..7) or nil to match any
+
+argument:: func
+args: on/off (boolean), tracki (0..7)
+
+
+
+
+METHOD:: sceneLaunch
+Assign a function for the scene launch buttons
+
+argument:: row
+(0..4) or nil to match any
+
+argument:: func
+args: buttoni (0..4)
+
+
+
+
+subsection:: Knobs
+
+METHOD:: deviceControl
+Assign a function to one of the 8 Device Control knobs (bottom right).  There are actually 8 virtual knobs for each of the 8 tracks making 64 total [TODO master should have a bank too].
+Whenever the Track Selection button for a track is pressed then the Device Control knobs recall the values for that track and sends all 8 controls.
+
+argument:: tracki
+0..7 or nil matches any track
+
+argument:: knobi
+0..7 or nil matches any knob
+
+argument:: func
+args: value (0..127), knobi (0..7), tracki (0..7)
+
+
+
+METHOD:: trackControl
+Assign a function to one of the 8 Track Control knobs (top right).
+
+argument:: i
+0..7 or nil (matches any knob)
+
+argument:: func
+args: value (0..127), knobi
+
+
+
+
+
+
+
+
+subsection:: Misc buttons
+
+Not yet implemented: pan button, send a/b/c buttons, bank select, shift, the 1..8 below Device Control knobs.
+
+METHOD:: play
+Assign a handler for the PLAY button
+
+argument:: func
+
+
+
+METHOD:: stop
+Assign a handler for the STOP button
+
+argument:: func
+
+
+
+METHOD:: rec
+Assign a handler for the master REC button
+
+argument:: func
+
+
+
+METHOD:: nudgeMinus
+Assign a handler for the NUDGE - button
+
+argument:: func
+
+
+
+METHOD:: nudgePlus
+Assign a handler for the NUDGE + button
+
+argument:: func
+
+
+
+METHOD:: tapTempo
+Assign a handler for the TAP TEMPO button
+
+argument:: func
+
+
+
+
+subsection:: Misc
+
+METHOD:: add
+Adds all the midi responders.  Automatically called if created with install=true [the default].
+
+METHOD:: remove
+Removes all midi responders
+
+
+subsection:: Private
+
+METHOD:: init
+private
+argument:: add
+METHOD:: prAddNote
+private
+argument:: track
+argument:: note
+argument:: func
+METHOD:: prAddNoteOff
+private
+argument:: track
+argument:: note
+argument:: func
+METHOD:: prAddNoteOnOff
+private
+argument:: track
+argument:: note
+argument:: onFunc
+argument:: offFunc
+
+
+
+
+EXAMPLES::
+
+code::
+a.remove;
+a = APC40.new;
+// set them all to off
+a.setAllClips();
+
+a.setClip(5,4,1)
+a.setClip(3,3,1)
+
+a.setClip(2,3,1)
+a.setClip(2,3,4)
+
+
+// any button toggle between off and green
+a.clipLaunch({ arg track,button,state;
+    [track,button,state].debug
+},nil,nil,nil,[0,1]);
+
+
+// specific button 0@0 toggle between off and green
+a.clipLaunch({ arg track,button,state;
+    [track,button,state].debug
+},0,0,nil,[0,1]);
+
+// any button, fires only when state goes to 1
+a.clipLaunch({ arg track,button,state;
+    [track,button,state].debug("on")
+},nil,nil,1,[0,1]);
+
+
+
+
+// cycle all between off, green , orange, red
+a.clipLaunch({ arg track,button,state;
+    [track,button,state].debug
+},nil,nil,nil,[0,1,5,3]);
+
+// set it yourself
+a.clipLaunch({ arg track,button,state;
+	a.setClip(track,button, [0,1,2,3,4,5].choose)
+},nil,nil,nil,nil);
+
+a.setAllClips
+
+a.fader(0,{ arg val;
+    val.debug("zero")
+});
+
+a.fader(nil,{ arg val,i;
+    val.debug(i)
+});
+
+
+a.master({ arg val; val.debug("master") });
+
+a.rec({ "record".debug });
+a.stop({ "stop".debug });
+a.play({ "play".debug });
+a.clipStop(nil,{ "clipStop".debug });
+a.stopAllClips({ "stopAllClips".debug });
+a.activator(nil,{ arg track,boo; "activator".debug(boo) });
+a.solo(nil,{ arg track,boo; "solo x".debug(boo) });
+a.recordArm(nil,{ arg track,boo; "recordArm".debug(boo) });
+a.nudgeMinus({ "nudgeMinus".debug });
+a.nudgePlus({ "nudgePlus".debug });
+a.tapTempo({ "tapTempo".debug });
+
+a.stopAllClips({ "stopAllClips".debug },{"up".debug});
+
+a.remove
+::
+
+
+
+
+
