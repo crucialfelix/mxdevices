@@ -39,6 +39,7 @@ APC40 {
 			})
 	}
 	clipLaunch { arg func,track,button,state,blinkCycle=#[0,1];
+		// func(chani,buttoni,state)
 		var f,note;
 		if(blinkCycle.notNil,{
 			f = { arg src, chan,num,veloc;
@@ -119,10 +120,10 @@ APC40 {
 
 
 	// blinkenlichten
-	setClip { arg track,button,mode;
+	setClip { arg track,button,state;
 		/* set the clipLaunch button blinking
 		button: 0..4 = top..bottom
-		mode:
+		state:
 			0 - Off
 			1 - Green
 			2 - Green Flashing
@@ -131,8 +132,8 @@ APC40 {
 			5 - Orange
 			6 - Orange Flashing
 		*/
-		apc.write(4,144+track,0+track,53+button,mode);
-		clipLaunchStates.put(button,track,mode);
+		apc.write(4,144+track,0+track,53+button,state);
+		clipLaunchStates.put(button,track,state);
 	}
 	setAllClips { arg array2d;
 		// default: set all to off
@@ -142,6 +143,11 @@ APC40 {
 			array2d.rows.do { arg button;
 				this.setClip(track,button,array2d.at(button,track))
 			}
+		}
+	}
+	setTrackClips { arg tracki, arrayOfFive;
+		(arrayOfFive ?? {0!5}).do { arg state,i;
+			this.setClip(tracki,i,state)
 		}
 	}
 
