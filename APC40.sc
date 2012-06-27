@@ -208,10 +208,14 @@ APC40 {
 		noffr = nil;
 	}
 	init { arg add;
-		apc = MIDIOut.newByName("Akai APC40", "Akai APC40");
-		src = MIDIClient.sources.detect({ arg midiEndPoint; 
+		try {
+			apc = MIDIOut.newByName("Akai APC40", "Akai APC40");
+			src = MIDIClient.sources.detect({ arg midiEndPoint; 
 			midiEndPoint.name == "Akai APC40" }).uid;
-
+		} { arg e;
+			e.errorString.postln;
+			add = false;
+		};
 		clipLaunchStates = Array2D.fromArray(5,8,0!40);
 		handlers = MultiLevelIdentityDictionary.new;
 		map = MultiLevelIdentityDictionary.new;
