@@ -46,7 +46,7 @@ APC40 {
 				var currentState,newState,bi;
 				bi = num - 53;
 				currentState = clipLaunchStates.at(bi,chan);
-				newState = blinkCycle.wrapAt( blinkCycle.indexOf(currentState) + 1 );
+				newState = blinkCycle.wrapAt( (blinkCycle.indexOf(currentState)?0) + 1 );
 				this.setClip(chan,bi,newState);
 				if(state.isNil or: {newState == state},{
 					func.value(chan,bi,newState);
