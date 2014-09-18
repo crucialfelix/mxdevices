@@ -1,10 +1,10 @@
 CLASS:: APC40
 summary:: MIDI responders and control of blinkenlichten for the APC40
-categories:: MIDI, Control
-related:: 
+categories:: External Control>MIDI
+
 
 DESCRIPTION::
-Set handler methods for all sliders, knobs and buttons on the APC40.  Also supports methods for setting the lights in the Clip Launch area. 
+Set handler methods for all sliders, knobs and buttons on the APC40.  Also supports methods for setting the lights in the Clip Launch area.
 
 
 
@@ -118,7 +118,7 @@ See state list above
 
 
 METHOD:: clipLaunchStates
-Returns an Array2D of the current clip launch button states (state values).  NOTE that Array2D is rows, columns not x/y (5 rows, 8 columns) so you need to access it as apc.clipLaunchStates.at(y,x) 
+Returns an Array2D of the current clip launch button states (state values).  NOTE that Array2D is rows, columns not x/y (5 rows, 8 columns) so you need to access it as apc.clipLaunchStates.at(y,x)
 
 returns:: an Array2D
 
@@ -164,7 +164,7 @@ METHOD:: stopAllClips
 Assign a function for the STOP ALL CLIPS button.
 
 argument:: func
-args: 
+args:
 
 argument:: offFunc
 Optional function fired on note off: when the button is released.  All of the buttons will later be implemented this way.

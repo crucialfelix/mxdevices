@@ -1,15 +1,15 @@
 
 var cs;
-cs = ControlSpec(0,127,\lin,1);
+cs = ControlSpec(0, 127, \lin, 1);
 
 MxUnit.register('APC40',
 (
 	make: { arg apc;
-		var inlets,outlets,out,i=0;
+		var inlets, outlets, out, i=0;
 		~source = apc;
 		inlets = [
-		  MxInlet("setAllClips",0,
-			ArraySpec(ControlSpec(0,5,step:1)),
+		  MxInlet("setAllClips", 0,
+			ArraySpec(ControlSpec(0, 5, step:1)),
 			MxSetter({ arg array; apc.setAllClips(array) })
 		  )
 		];
@@ -20,9 +20,9 @@ MxUnit.register('APC40',
 		  	out = MxOutlet("fader"++(chani + 1),
 		  					i,
 							cs,
-							MxHasAction({arg f; apc.fader(chani,{ arg val,chani;
+							MxHasAction({arg f; apc.fader(chani, { arg val, chani;
 									f.value(val)
-								}) 
+								})
 							}));
 		  	outlets.add(out);
 		};
@@ -46,9 +46,9 @@ MxUnit.register('APC40',
 		  	out = MxOutlet("trackControl"++(chani+1),
 		  					i,
 							cs,
-							MxHasAction({arg f; apc.trackControl(chani,{ arg val,chani;
+							MxHasAction({arg f; apc.trackControl(chani, { arg val, chani;
 									f.value(val)
-								}) 
+								})
 							}));
 		  	outlets.add(out);
 		};
@@ -59,14 +59,14 @@ MxUnit.register('APC40',
 			  	out = MxOutlet("deviceControl"++(chani+1)++(knobi+1),
 			  					i,
 								cs,
-								MxHasAction({arg f; apc.deviceControl(chani,knobi,{ arg val,knobi,chani;
+								MxHasAction({arg f; apc.deviceControl(chani, knobi, { arg val, knobi, chani;
 										f.value(val)
-									}) 
+									})
 								}));
 			  	outlets.add(out);
 			}
 		};
 
-		MxUnit(apc,inlets,outlets)
+		MxUnit(apc, inlets, outlets)
 	}
 ));
