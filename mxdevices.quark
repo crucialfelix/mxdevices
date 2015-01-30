@@ -1,8 +1,6 @@
 (
 	\name:			"mxdevices",
-	\path:			"mxdevices", 
 	\summary:		"Misc musical devices and gadgets with support for Mx",
 	\author:		"felix",
-	\url:			"https://github.com/crucialfelix/mxdevices",
-	\version:		"1.0"
+	\version:		"1.0.0"
 )
